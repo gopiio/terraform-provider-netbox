@@ -10,12 +10,13 @@ import (
 
 func dataSourceNetboxManufacturer() *schema.Resource {
 	return &schema.Resource{
-		Read:        dataSourceNetboxDeviceRoleRead,
+		Read:        dataSourceNetboxManufacturerRead,
 		Description: `:meta:subcategory:Data Center Inventory Management (DCIM):`,
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
+				Computed: true,
 			},
 			tagsKey: tagsSchemaRead,
 		},
