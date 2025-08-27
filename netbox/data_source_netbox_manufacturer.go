@@ -26,11 +26,12 @@ func dataSourceNetboxManufacturer() *schema.Resource {
 func dataSourceNetboxManufacturerRead(d *schema.ResourceData, m interface{}) error {
 	api := m.(*providerState)
 
-	name := d.Get("name").(string)
-	params := dcim.NewDcimManufacturersListParams() //dcim.NewDcimDeviceRolesListParams()
-	params.Name = &name
-	limit := int64(2) // Limit of 2 is enough
-	params.Limit = &limit
+	params := dcim.NewDcimManufacturersListParams()
+	params.Limit = int64ToPtr(2)
+
+	if name, ok := d.Get("name").(string); ok && name != "" {
+		params.SetName(&name)
+	}
 
 	res, err := api.Dcim.DcimManufacturersList(params, nil)
 	if err != nil {
