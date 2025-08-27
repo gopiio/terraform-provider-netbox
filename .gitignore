@@ -37,3 +37,4 @@ website/vendor
 
 # Locally compiled provider
 terraform-provider-netbox
+public-key.asc
