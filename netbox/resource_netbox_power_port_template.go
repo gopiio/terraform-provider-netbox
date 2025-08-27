@@ -18,7 +18,7 @@ func resourceNetboxPowerPortTemplate() *schema.Resource {
 		UpdateContext: resourceNetboxPowerPortTemplateUpdate,
 		DeleteContext: resourceNetboxPowerPortTemplateDelete,
 
-		Description: `:meta:subcategory:Data Center Inventory Management (DCIM):From the [official documentation](https://docs.netbox.dev/en/stable/models/dcim/interfacetemplate/):
+		Description: `:meta:subcategory:Data Center Inventory Management (DCIM):From the [official documentation](https://netboxlabs.com/docs/netbox/models/dcim/powerporttemplate/):
 
 > A template for a power port that will be created on all instantiations of the parent device type. See the power port documentation for more detail.`,
 		Schema: map[string]*schema.Schema{
