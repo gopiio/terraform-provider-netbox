@@ -76,8 +76,8 @@ func resourceNetboxPowerPortTemplateCreate(ctx context.Context, d *schema.Resour
 	description := d.Get("description").(string)
 	label := d.Get("label").(string)
 	powerPortType := d.Get("type").(string)
-	allocatedDraw := d.Get("allocated_draw").(int64)
-	maximumDraw := d.Get("maximum_draw").(int64)
+	allocatedDraw := int64(d.Get("allocated_draw").(int))
+	maximumDraw := int64(d.Get("maximum_draw").(int))
 
 	data := models.WritablePowerPortTemplate{
 		Name:          &name,
@@ -157,8 +157,8 @@ func resourceNetboxPowerPortTemplateUpdate(ctx context.Context, d *schema.Resour
 	description := d.Get("description").(string)
 	label := d.Get("label").(string)
 	powerPortType := d.Get("type").(string)
-	allocatedDraw := d.Get("allocated_draw").(int64)
-	maximumDraw := d.Get("maximum_draw").(int64)
+	allocatedDraw := int64(d.Get("allocated_draw").(int))
+	maximumDraw := int64(d.Get("maximum_draw").(int))
 
 	data := models.WritablePowerPortTemplate{
 		Name:          &name,
