@@ -128,13 +128,13 @@ func resourcePowerOutletTemplateRead(ctx context.Context, d *schema.ResourceData
 	d.Set("description", tmpl.Description)
 	d.Set("label", tmpl.Label)
 
-	if tmpl.Type.Value != nil {
+	if tmpl.Type != nil {
 		d.Set("type", tmpl.Type.Value)
 	} else {
 		d.Set("type", nil)
 	}
 
-	if tmpl.FeedLeg.Value != nil {
+	if tmpl.FeedLeg != nil {
 		d.Set("feed_leg", tmpl.FeedLeg.Value)
 	} else {
 		d.Set("feed_leg", nil)
