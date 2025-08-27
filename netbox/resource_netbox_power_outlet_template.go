@@ -22,17 +22,9 @@ func resourcePowerOutletTemplate() *schema.Resource {
 
 > A template for a power outlets that will be created on all instantiations of the parent device type. See the power outlets documentation for more detail.`,
 		Schema: map[string]*schema.Schema{
-			"device_id": {
-				Type:     schema.TypeInt,
-				Required: true,
-			},
 			"name": {
 				Type:     schema.TypeString,
 				Required: true,
-			},
-			"module_id": {
-				Type:     schema.TypeInt,
-				Optional: true,
 			},
 			"label": {
 				Type:     schema.TypeString,
@@ -56,6 +48,18 @@ func resourcePowerOutletTemplate() *schema.Resource {
 			"description": {
 				Type:     schema.TypeString,
 				Optional: true,
+			},
+			"device_type_id": {
+				Type:         schema.TypeInt,
+				Optional:     true,
+				ExactlyOneOf: []string{"device_type_id", "module_type_id"},
+				ForceNew:     true,
+			},
+			"module_type_id": {
+				Type:         schema.TypeInt,
+				Optional:     true,
+				ExactlyOneOf: []string{"device_type_id", "module_type_id"},
+				ForceNew:     true,
 			},
 		},
 		Importer: &schema.ResourceImporter{
