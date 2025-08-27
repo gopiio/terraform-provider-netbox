@@ -119,8 +119,12 @@ func resourceConsolePortTemplateRead(ctx context.Context, d *schema.ResourceData
 	d.Set("name", tmpl.Name)
 	d.Set("description", tmpl.Description)
 	d.Set("label", tmpl.Label)
-	d.Set("type", tmpl.Type.Value)
 
+	if tmpl.Type.Value != nil {
+		d.Set("type", tmpl.Type.Value)
+	} else {
+		d.Set("type", nil)
+	}
 	if tmpl.DeviceType != nil {
 		d.Set("device_type_id", tmpl.DeviceType.ID)
 	}

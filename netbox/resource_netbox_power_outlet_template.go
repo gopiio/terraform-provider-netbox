@@ -127,8 +127,19 @@ func resourcePowerOutletTemplateRead(ctx context.Context, d *schema.ResourceData
 	d.Set("name", tmpl.Name)
 	d.Set("description", tmpl.Description)
 	d.Set("label", tmpl.Label)
-	d.Set("type", tmpl.Type.Value)
-	d.Set("feed_leg", tmpl.FeedLeg.Value)
+
+	if tmpl.Type.Value != nil {
+		d.Set("type", tmpl.Type.Value)
+	} else {
+		d.Set("type", nil)
+	}
+
+	if tmpl.FeedLeg.Value != nil {
+		d.Set("feed_leg", tmpl.FeedLeg.Value)
+	} else {
+		d.Set("feed_leg", nil)
+	}
+
 	d.Set("power_port_id", tmpl.PowerPort.ID)
 
 	if tmpl.DeviceType != nil {
