@@ -52,14 +52,6 @@ func resourceConsolePortTemplate() *schema.Resource {
 				ExactlyOneOf: []string{"device_type_id", "module_type_id"},
 				ForceNew:     true,
 			},
-			"maximum_draw": {
-				Type:     schema.TypeInt,
-				Optional: true,
-			},
-			"allocated_draw": {
-				Type:     schema.TypeInt,
-				Optional: true,
-			},
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
