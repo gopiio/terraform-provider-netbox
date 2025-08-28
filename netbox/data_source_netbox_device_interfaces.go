@@ -60,29 +60,8 @@ func dataSourceNetboxDeviceInterfaces() *schema.Resource {
 							Computed: true,
 						},
 						"mac_address": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "The MAC address as string from the first MAC address assigned to this interface, if any.",
-						},
-						"mac_addresses": {
-							Type:     schema.TypeSet,
+							Type:     schema.TypeString,
 							Computed: true,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"id": {
-										Type:     schema.TypeInt,
-										Computed: true,
-									},
-									"mac_address": {
-										Type:     schema.TypeString,
-										Computed: true,
-									},
-									"description": {
-										Type:     schema.TypeString,
-										Computed: true,
-									},
-								},
-							},
 						},
 						"mode": {
 							Type:     schema.TypeMap,
@@ -169,6 +148,7 @@ func dataSourceNetboxDeviceInterfaceRead(d *schema.ResourceData, m interface{}) 
 		params.Limit = &limitInt
 	}
 
+
 	if filter, ok := d.GetOk("filter"); ok {
 		var filterParams = filter.(*schema.Set)
 		for _, f := range filterParams.List() {
@@ -219,20 +199,8 @@ func dataSourceNetboxDeviceInterfaceRead(d *schema.ResourceData, m interface{}) 
 			mapping["description"] = v.Description
 		}
 		mapping["enabled"] = v.Enabled
-		if v.MacAddresses != nil {
-			var mac_addresses []map[string]interface{}
-			for i, mac := range v.MacAddresses {
-				var mac_address = make(map[string]interface{})
-				// We just set the first mac address in the `mac_address` attribute
-				if i == 0 {
-					mapping["mac_address"] = v.MacAddresses[i].MacAddress
-				}
-				mac_address["id"] = mac.ID
-				mac_address["description"] = mac.Description
-				mac_address["mac_address"] = mac.MacAddress
-				mac_addresses = append(mac_addresses, mac_address)
-			}
-			mapping["mac_addresses"] = mac_addresses
+		if v.MacAddress != nil {
+			mapping["mac_address"] = *v.MacAddress
 		}
 		if v.Mode != nil {
 			mapping["mode"] = map[string]string{

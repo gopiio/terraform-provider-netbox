@@ -41,10 +41,7 @@ Read-Only:
 
 - `description` (String)
 - `id` (Number)
-- `location_id` (Number)
 - `prefix` (String)
-- `region_id` (Number)
-- `site_group_id` (Number)
 - `site_id` (Number)
 - `status` (String)
 - `tags` (Set of String)

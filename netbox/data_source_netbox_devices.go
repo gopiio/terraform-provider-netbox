@@ -148,10 +148,6 @@ func dataSourceNetboxDevices() *schema.Resource {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
-						"oob_ip": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
 						"tags": tagsSchemaRead,
 					},
 				},
@@ -321,13 +317,6 @@ func dataSourceNetboxDevicesRead(d *schema.ResourceData, m interface{}) error {
 			if err == nil {
 				primaryIPv6 := ip.String()
 				mapping["primary_ipv6"] = &primaryIPv6
-			}
-		}
-		if device.OobIP != nil {
-			ip, _, err := net.ParseCIDR(*device.OobIP.Address)
-			if err == nil {
-				OobIP := ip.String()
-				mapping["oob_ip"] = &OobIP
 			}
 		}
 		s = append(s, mapping)

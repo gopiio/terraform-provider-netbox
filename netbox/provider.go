@@ -145,8 +145,6 @@ func Provider() *schema.Provider {
 			"netbox_device_front_port":          resourceNetboxDeviceFrontPort(),
 			"netbox_device_rear_port":           resourceNetboxDeviceRearPort(),
 			"netbox_device_module_bay":          resourceNetboxDeviceModuleBay(),
-			"netbox_device_bay":                 resourceNetboxDeviceBay(),
-			"netbox_device_bay_template":        resourceNetboxDeviceBayTemplate(),
 			"netbox_module":                     resourceNetboxModule(),
 			"netbox_module_type":                resourceNetboxModuleType(),
 			"netbox_power_feed":                 resourceNetboxPowerFeed(),
@@ -163,10 +161,6 @@ func Provider() *schema.Provider {
 			"netbox_vpn_tunnel":                 resourceNetboxVpnTunnel(),
 			"netbox_vpn_tunnel_termination":     resourceNetboxVpnTunnelTermination(),
 			"netbox_config_context":             resourceNetboxConfigContext(),
-			"netbox_mac_address":                resourceNetboxMACAddress(),
-			"netbox_power_port_template":        resourceNetboxPowerPortTemplate(),
-			"netbox_console_port_template":      resourceConsolePortTemplate(),
-			"netbox_power_outlet_template":      resourcePowerOutletTemplate(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			"netbox_asn":                dataSourceNetboxAsn(),
@@ -200,7 +194,6 @@ func Provider() *schema.Provider {
 			"netbox_device_power_ports": dataSourceNetboxDevicePowerPorts(),
 			"netbox_ipam_role":          dataSourceNetboxIPAMRole(),
 			"netbox_route_target":       dataSourceNetboxRouteTarget(),
-			"netbox_ip_address":         dataSourceNetboxIPAddress(),
 			"netbox_ip_addresses":       dataSourceNetboxIPAddresses(),
 			"netbox_ip_range":           dataSourceNetboxIPRange(),
 			"netbox_ip_ranges":          dataSourceNetboxIPRanges(),
@@ -212,8 +205,6 @@ func Provider() *schema.Provider {
 			"netbox_racks":              dataSourceNetboxRacks(),
 			"netbox_rack_role":          dataSourceNetboxRackRole(),
 			"netbox_config_context":     dataSourceNetboxConfigContext(),
-			"netbox_virtual_disk":       dataSourceNetboxVirtualDisk(),
-			"netbox_manufacturer":       dataSourceNetboxManufacturer(),
 		},
 		Schema: map[string]*schema.Schema{
 			"server_url": {
@@ -338,21 +329,16 @@ func providerConfigure(ctx context.Context, data *schema.ResourceData) (interfac
 			return nil, diag.FromErr(err)
 		}
 
-		netboxVersionStringFromAPI := res.GetPayload().(map[string]interface{})["netbox-version"].(string)
+		netboxVersion := res.GetPayload().(map[string]interface{})["netbox-version"].(string)
 
-		netboxVersion, err := extractSemanticVersionFromString(netboxVersionStringFromAPI)
-		if err != nil {
-			return nil, diag.FromErr(fmt.Errorf("error extracting netbox version. try using the `skip_version_check` provider parameter to bypass this error. original error: %w", err))
-		}
-
-		supportedVersions := []string{"4.2.2", "4.2.3", "4.2.4", "4.2.5", "4.2.6", "4.2.7", "4.2.8", "4.2.9"}
+		supportedVersions := []string{"4.1.0", "4.1.1", "4.1.2", "4.1.3", "4.1.4", "4.1.5", "4.1.6", "4.1.7", "4.1.8", "4.1.10", "4.1.11"}
 
 		if !slices.Contains(supportedVersions, netboxVersion) {
 			// Currently, there is no way to test these warnings. There is an issue to track this: https://github.com/hashicorp/terraform-plugin-sdk/issues/864
 			diags = append(diags, diag.Diagnostic{
 				Severity: diag.Warning,
 				Summary:  "Possibly unsupported Netbox version",
-				Detail:   fmt.Sprintf("Your Netbox reports version %v. From that, the provider extracted Netbox version %v.\nThe provider was successfully tested against the following versions:\n\n  %v\n\nUnexpected errors may occur.", netboxVersionStringFromAPI, netboxVersion, strings.Join(supportedVersions, ", ")),
+				Detail:   fmt.Sprintf("Your Netbox version is v%v. The provider was successfully tested against the following versions:\n\n  %v\n\nUnexpected errors may occur.", netboxVersion, strings.Join(supportedVersions, ", ")),
 			})
 		}
 	}

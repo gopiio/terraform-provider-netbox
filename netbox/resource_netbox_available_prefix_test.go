@@ -23,11 +23,8 @@ resource "netbox_prefix" "parent" {
   description = "%[1]s"
   status = "container"
   tags = [netbox_tag.test.name]
-  lifecycle {
-    ignore_changes = [%[3]s]
-  }
 }
-`, testName, parentPrefix, customFieldsKey)
+`, testName, parentPrefix)
 }
 
 func TestAccNetboxAvailablePrefix_basic(t *testing.T) {
@@ -79,64 +76,6 @@ resource "netbox_available_prefix" "test" {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "mark_utilized", "false"),
 					resource.TestCheckResourceAttr(resourceName, "is_pool", "false"),
-				),
-			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateIdFunc: func(s *terraform.State) (string, error) {
-					parent, ok := s.RootModule().Resources[parentResourceName]
-					if !ok {
-						return "", fmt.Errorf("Not found: %s", parentResourceName)
-					}
-					resource, ok := s.RootModule().Resources[resourceName]
-					if !ok {
-						return "", fmt.Errorf("Not found: %s", resourceName)
-					}
-
-					return fmt.Sprintf("%s %s %d", parent.Primary.ID, resource.Primary.ID, testPrefixLength), nil
-				},
-			},
-		},
-	})
-}
-
-func TestAccNetboxAvailablePrefix_cf(t *testing.T) {
-	testParentPrefix := "1.1.0.0/24"
-	testPrefixLength := 25
-	expectedPrefix := "1.1.0.0/25"
-	testSlug := "prefix_cf"
-	testName := testAccGetTestName(testSlug)
-
-	parentResourceName := "netbox_prefix.parent"
-	resourceName := "netbox_available_prefix.test"
-
-	resource.Test(t, resource.TestCase{
-		Providers: testAccProviders,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccNetboxAvailablePrefixFullDependencies(testName, testParentPrefix) + fmt.Sprintf(`
-resource "netbox_custom_field" "test" {
-  name   = "%s"
-  type   = "text"
-  weight = 100
-  content_types = ["ipam.prefix"]
-}
-
-resource "netbox_available_prefix" "test" {
-  parent_prefix_id = netbox_prefix.parent.id
-  prefix_length = %d
-  status = "active"
-
-  custom_fields = {
-    "${netbox_custom_field.test.name}" = "test-field"
-  }
-}`, testSlug, testPrefixLength),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "prefix", expectedPrefix),
-					resource.TestCheckResourceAttr(resourceName, "status", "active"),
-					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("custom_fields.%s", testSlug), "test-field"),
 				),
 			},
 			{
@@ -221,88 +160,6 @@ resource "netbox_available_prefix" "test3" {
 					resource.TestCheckResourceAttr("netbox_available_prefix.test2", "prefix", expectedPrefixes[1]),
 				),
 				ExpectError: regexp.MustCompile(".*Insufficient resources are available to satisfy the request.*"),
-			},
-		},
-	})
-}
-
-func testAccNetboxAvailablePrefixScopeDependencies(testName string) string {
-	return fmt.Sprintf(`
-resource "netbox_site" "test" {
-  name = "%[1]s"
-}
-
-resource "netbox_location" "test" {
-  name = "%[1]s"
-  site_id = netbox_site.test.id
-}
-
-resource "netbox_region" "test" {
-  name = "%[1]s"
-}
-
-resource "netbox_site_group" "test" {
-  name = "%[1]s"
-}
-`, testName)
-}
-
-func TestAccNetboxAvailablePrefix_scopes(t *testing.T) {
-	testParentPrefix := "16.1.0.0/24"
-	testPrefixLength := 25
-	testSlug := "prefix-scopes"
-	testName := testAccGetTestName(testSlug)
-
-	resource.Test(t, resource.TestCase{
-		Providers: testAccProviders,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccNetboxAvailablePrefixFullDependencies(testName, testParentPrefix) + testAccNetboxAvailablePrefixScopeDependencies(testName) + fmt.Sprintf(`
-resource "netbox_available_prefix" "with_site_id" {
-  parent_prefix_id = netbox_prefix.parent.id
-  prefix_length = %[2]d
-  status = "active"
-  site_id = netbox_site.test.id
-}`, testSlug, testPrefixLength),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrPair("netbox_available_prefix.with_site_id", "site_id", "netbox_site.test", "id"),
-				),
-			},
-			{
-				Config: testAccNetboxAvailablePrefixFullDependencies(testName, testParentPrefix) + testAccNetboxAvailablePrefixScopeDependencies(testName) + fmt.Sprintf(`
-resource "netbox_available_prefix" "with_location_id" {
-  parent_prefix_id = netbox_prefix.parent.id
-  prefix_length = %[2]d
-  status = "active"
-  location_id = netbox_location.test.id
-}`, testSlug, testPrefixLength),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrPair("netbox_available_prefix.with_location_id", "location_id", "netbox_location.test", "id"),
-				),
-			},
-			{
-				Config: testAccNetboxAvailablePrefixFullDependencies(testName, testParentPrefix) + testAccNetboxAvailablePrefixScopeDependencies(testName) + fmt.Sprintf(`
-resource "netbox_available_prefix" "with_region_id" {
-  parent_prefix_id = netbox_prefix.parent.id
-  prefix_length = %[2]d
-  status = "active"
-  region_id = netbox_region.test.id
-}`, testSlug, testPrefixLength),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrPair("netbox_available_prefix.with_region_id", "region_id", "netbox_region.test", "id"),
-				),
-			},
-			{
-				Config: testAccNetboxAvailablePrefixFullDependencies(testName, testParentPrefix) + testAccNetboxAvailablePrefixScopeDependencies(testName) + fmt.Sprintf(`
-resource "netbox_available_prefix" "with_site_group_id" {
-  parent_prefix_id = netbox_prefix.parent.id
-  prefix_length = %[2]d
-  status = "active"
-  site_group_id = netbox_site_group.test.id
-}`, testSlug, testPrefixLength),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrPair("netbox_available_prefix.with_site_group_id", "site_group_id", "netbox_site_group.test", "id"),
-				),
 			},
 		},
 	})

@@ -63,25 +63,9 @@ func resourceNetboxAvailablePrefix() *schema.Resource {
 				Type:     schema.TypeInt,
 				Optional: true,
 			},
-			"location_id": {
-				Type:          schema.TypeInt,
-				Optional:      true,
-				ConflictsWith: []string{"site_id", "site_group_id", "region_id"},
-			},
 			"site_id": {
-				Type:          schema.TypeInt,
-				Optional:      true,
-				ConflictsWith: []string{"location_id", "site_group_id", "region_id"},
-			},
-			"site_group_id": {
-				Type:          schema.TypeInt,
-				Optional:      true,
-				ConflictsWith: []string{"location_id", "site_id", "region_id"},
-			},
-			"region_id": {
-				Type:          schema.TypeInt,
-				Optional:      true,
-				ConflictsWith: []string{"location_id", "site_id", "site_group_id"},
+				Type:     schema.TypeInt,
+				Optional: true,
 			},
 			"vlan_id": {
 				Type:     schema.TypeInt,
@@ -91,8 +75,7 @@ func resourceNetboxAvailablePrefix() *schema.Resource {
 				Type:     schema.TypeInt,
 				Optional: true,
 			},
-			customFieldsKey: customFieldsSchema,
-			tagsKey:         tagsSchema,
+			tagsKey: tagsSchema,
 		},
 		Importer: &schema.ResourceImporter{
 			StateContext: func(c context.Context, rd *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
@@ -137,9 +120,6 @@ func resourceNetboxAvailablePrefixCreate(d *schema.ResourceData, m interface{}) 
 	prefixLength := int64(d.Get("prefix_length").(int))
 	data := models.PrefixLength{
 		PrefixLength: &prefixLength,
-	}
-	if cf, ok := d.GetOk(customFieldsKey); ok {
-		data.CustomFields = cf
 	}
 	params := ipam.NewIpamPrefixesAvailablePrefixesCreateParams().WithID(parentPrefixID).WithData(&data)
 

@@ -31,7 +31,6 @@ resource "netbox_device_type" "test" {
   u_height = "0.5"
   manufacturer_id = netbox_manufacturer.test.id
   is_full_depth = true
-  subdevice_role = "parent"
 }`, testName, randomSlug),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("netbox_device_type.test", "model", testName),
@@ -40,7 +39,6 @@ resource "netbox_device_type" "test" {
 					resource.TestCheckResourceAttr("netbox_device_type.test", "u_height", "0.5"),
 					resource.TestCheckResourceAttrPair("netbox_device_type.test", "manufacturer_id", "netbox_manufacturer.test", "id"),
 					resource.TestCheckResourceAttr("netbox_device_type.test", "is_full_depth", "true"),
-					resource.TestCheckResourceAttr("netbox_device_type.test", "subdevice_role", "parent"),
 				),
 			},
 			{
@@ -53,19 +51,17 @@ resource "netbox_device_type" "test" {
   model = "%[1]s"
   slug = "%[2]s"
   part_number = "%[2]s"
-  u_height = "0"
+  u_height = "0.5"
   manufacturer_id = netbox_manufacturer.test.id
   is_full_depth = false
-  subdevice_role = "child"
 }`, testName, randomSlug),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("netbox_device_type.test", "model", testName),
 					resource.TestCheckResourceAttr("netbox_device_type.test", "slug", randomSlug),
 					resource.TestCheckResourceAttr("netbox_device_type.test", "part_number", randomSlug),
-					resource.TestCheckResourceAttr("netbox_device_type.test", "u_height", "0"),
+					resource.TestCheckResourceAttr("netbox_device_type.test", "u_height", "0.5"),
 					resource.TestCheckResourceAttrPair("netbox_device_type.test", "manufacturer_id", "netbox_manufacturer.test", "id"),
 					resource.TestCheckResourceAttr("netbox_device_type.test", "is_full_depth", "false"),
-					resource.TestCheckResourceAttr("netbox_device_type.test", "subdevice_role", "child"),
 				),
 			},
 			{

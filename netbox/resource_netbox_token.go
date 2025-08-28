@@ -5,7 +5,6 @@ import (
 
 	"github.com/fbreckle/go-netbox/netbox/client/users"
 	"github.com/fbreckle/go-netbox/netbox/models"
-	"github.com/go-openapi/strfmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
@@ -49,9 +48,8 @@ func resourceNetboxToken() *schema.Resource {
 				Computed: true,
 			},
 			"expires": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validation.IsRFC3339Time,
+				Type:     schema.TypeString,
+				Computed: true,
 			},
 			"description": {
 				Type:     schema.TypeString,
@@ -83,12 +81,6 @@ func resourceNetboxTokenCreate(d *schema.ResourceData, m interface{}) error {
 
 	data.WriteEnabled = d.Get("write_enabled").(bool)
 	data.Description = d.Get("description").(string)
-
-	expires, err := strfmt.ParseDateTime(d.Get("expires").(string))
-	if err != nil {
-		return err
-	}
-	data.Expires = &expires
 
 	params := users.NewUsersTokensCreateParams().WithData(&data)
 	res, err := api.Users.UsersTokensCreate(params, nil)
@@ -125,7 +117,7 @@ func resourceNetboxTokenRead(d *schema.ResourceData, m interface{}) error {
 
 	d.Set("key", token.Key)
 	d.Set("last_used", token.LastUsed)
-	d.Set("expires", token.Expires.String())
+	d.Set("expires", token.Expires)
 	d.Set("allowed_ips", token.AllowedIps)
 	d.Set("write_enabled", token.WriteEnabled)
 	d.Set("description", token.Description)
@@ -153,14 +145,8 @@ func resourceNetboxTokenUpdate(d *schema.ResourceData, m interface{}) error {
 	data.WriteEnabled = d.Get("write_enabled").(bool)
 	data.Description = d.Get("description").(string)
 
-	expires, err := strfmt.ParseDateTime(d.Get("expires").(string))
-	if err != nil {
-		return err
-	}
-	data.Expires = &expires
-
 	params := users.NewUsersTokensUpdateParams().WithID(id).WithData(&data)
-	_, err = api.Users.UsersTokensUpdate(params, nil)
+	_, err := api.Users.UsersTokensUpdate(params, nil)
 	if err != nil {
 		return err
 	}

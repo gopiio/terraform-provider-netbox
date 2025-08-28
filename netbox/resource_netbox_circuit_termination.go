@@ -29,30 +29,9 @@ func resourceNetboxCircuitTermination() *schema.Resource {
 				Type:     schema.TypeInt,
 				Required: true,
 			},
-			"location_id": {
-				Type:         schema.TypeInt,
-				Optional:     true,
-				ExactlyOneOf: []string{"site_id", "site_group_id", "region_id", "provider_network_id"},
-			},
 			"site_id": {
-				Type:         schema.TypeInt,
-				Optional:     true,
-				ExactlyOneOf: []string{"location_id", "site_group_id", "region_id", "provider_network_id"},
-			},
-			"site_group_id": {
-				Type:         schema.TypeInt,
-				Optional:     true,
-				ExactlyOneOf: []string{"location_id", "site_id", "region_id", "provider_network_id"},
-			},
-			"region_id": {
-				Type:         schema.TypeInt,
-				Optional:     true,
-				ExactlyOneOf: []string{"location_id", "site_id", "site_group_id", "provider_network_id"},
-			},
-			"provider_network_id": {
-				Type:         schema.TypeInt,
-				Optional:     true,
-				ExactlyOneOf: []string{"location_id", "site_id", "site_group_id", "region_id"},
+				Type:     schema.TypeInt,
+				Required: true,
 			},
 			"port_speed": {
 				Type:     schema.TypeInt,
@@ -90,31 +69,9 @@ func resourceNetboxCircuitTerminationCreate(d *schema.ResourceData, m interface{
 		data.Circuit = int64ToPtr(int64(circuitIDValue.(int)))
 	}
 
-	siteID := getOptionalInt(d, "site_id")
-	siteGroupID := getOptionalInt(d, "site_group_id")
-	locationID := getOptionalInt(d, "location_id")
-	regionID := getOptionalInt(d, "region_id")
-	providerNetworkID := getOptionalInt(d, "provider_network_id")
-
-	switch {
-	case siteID != nil:
-		data.TerminationType = strToPtr("dcim.site")
-		data.TerminationID = siteID
-	case siteGroupID != nil:
-		data.TerminationType = strToPtr("dcim.sitegroup")
-		data.TerminationID = siteGroupID
-	case locationID != nil:
-		data.TerminationType = strToPtr("dcim.location")
-		data.TerminationID = locationID
-	case regionID != nil:
-		data.TerminationType = strToPtr("dcim.region")
-		data.TerminationID = regionID
-	case providerNetworkID != nil:
-		data.TerminationType = strToPtr("circuits.providernetwork")
-		data.TerminationID = providerNetworkID
-	default:
-		data.TerminationType = nil
-		data.TerminationID = nil
+	siteIDValue, ok := d.GetOk("site_id")
+	if ok {
+		data.Site = int64ToPtr(int64(siteIDValue.(int)))
 	}
 
 	portspeedValue, ok := d.GetOk("port_speed")
@@ -179,26 +136,10 @@ func resourceNetboxCircuitTerminationRead(d *schema.ResourceData, m interface{})
 		d.Set("circuit_id", nil)
 	}
 
-	d.Set("site_id", nil)
-	d.Set("site_group_id", nil)
-	d.Set("location_id", nil)
-	d.Set("region_id", nil)
-	d.Set("provider_network_id", nil)
-
-	if term.TerminationType != nil && term.TerminationID != nil {
-		scopeID := term.TerminationID
-		switch scopeType := term.TerminationType; *scopeType {
-		case "dcim.site":
-			d.Set("site_id", scopeID)
-		case "dcim.sitegroup":
-			d.Set("site_group_id", scopeID)
-		case "dcim.location":
-			d.Set("location_id", scopeID)
-		case "dcim.region":
-			d.Set("region_id", scopeID)
-		case "circuits.providernetwork":
-			d.Set("provider_network_id", scopeID)
-		}
+	if term.Site != nil {
+		d.Set("site_id", term.Site.ID)
+	} else {
+		d.Set("site_id", nil)
 	}
 
 	if term.PortSpeed != nil {
@@ -237,31 +178,9 @@ func resourceNetboxCircuitTerminationUpdate(d *schema.ResourceData, m interface{
 		data.Circuit = int64ToPtr(int64(circuitIDValue.(int)))
 	}
 
-	siteID := getOptionalInt(d, "site_id")
-	siteGroupID := getOptionalInt(d, "site_group_id")
-	locationID := getOptionalInt(d, "location_id")
-	regionID := getOptionalInt(d, "region_id")
-	providerNetworkID := getOptionalInt(d, "provider_network_id")
-
-	switch {
-	case siteID != nil:
-		data.TerminationType = strToPtr("dcim.site")
-		data.TerminationID = siteID
-	case siteGroupID != nil:
-		data.TerminationType = strToPtr("dcim.sitegroup")
-		data.TerminationID = siteGroupID
-	case locationID != nil:
-		data.TerminationType = strToPtr("dcim.location")
-		data.TerminationID = locationID
-	case regionID != nil:
-		data.TerminationType = strToPtr("dcim.region")
-		data.TerminationID = regionID
-	case providerNetworkID != nil:
-		data.TerminationType = strToPtr("circuits.providernetwork")
-		data.TerminationID = providerNetworkID
-	default:
-		data.TerminationType = nil
-		data.TerminationID = nil
+	siteIDValue, ok := d.GetOk("site_id")
+	if ok {
+		data.Site = int64ToPtr(int64(siteIDValue.(int)))
 	}
 
 	portspeedValue, ok := d.GetOk("port_speed")

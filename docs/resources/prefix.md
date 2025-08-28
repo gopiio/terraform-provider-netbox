@@ -39,12 +39,9 @@ resource "netbox_prefix" "my_prefix" {
 - `custom_fields` (Map of String)
 - `description` (String)
 - `is_pool` (Boolean)
-- `location_id` (Number) Conflicts with `site_id`, `site_group_id` and `region_id`.
 - `mark_utilized` (Boolean)
-- `region_id` (Number) Conflicts with `location_id`, `site_id` and `site_group_id`.
 - `role_id` (Number)
-- `site_group_id` (Number) Conflicts with `location_id`, `site_id` and `region_id`.
-- `site_id` (Number) Conflicts with `location_id`, `site_group_id` and `region_id`.
+- `site_id` (Number)
 - `tags` (Set of String)
 - `tenant_id` (Number)
 - `vlan_id` (Number)

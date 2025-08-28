@@ -39,7 +39,6 @@ data "netbox_device_type" "ex3" {
 - `model` (String)
 - `part_number` (String)
 - `slug` (String)
-- `subdevice_role` (String)
 
 ### Read-Only
 

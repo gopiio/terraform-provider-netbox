@@ -1,6 +1,6 @@
 # terraform-provider-netbox
 
-The Terraform Netbox provider is a plugin for Terraform that allows for the full lifecycle management of [Netbox](https://netboxlabs.com/docs/netbox/) resources.
+The Terraform Netbox provider is a plugin for Terraform that allows for the full lifecycle management of [Netbox](https://netbox.readthedocs.io/en/stable/) resources.
 This provider is maintained by E. Breuninger.
 
 See: [Official documentation](https://registry.terraform.io/providers/e-breuninger/netbox/latest/docs) in the Terraform registry.
@@ -8,6 +8,7 @@ See: [Official documentation](https://registry.terraform.io/providers/e-breuning
 ## Requirements
 
 - [Terraform](https://www.terraform.io/downloads.html) >= 0.12.x
+- [Go](https://golang.org/doc/install) >= 1.14
 
 ## Supported netbox versions
 
@@ -17,8 +18,7 @@ Since version [1.6.6](https://github.com/e-breuninger/terraform-provider-netbox/
 
 | Netbox version  | Provider version |
 | --------------- | ---------------- |
-| v4.2.2 - 4.2.9  | v4.0.0 and up    |
-| v4.1.0 - 4.1.11 | v3.10.0 - 3.11.1 |
+| v4.1.0 - 4.1.11 | v3.10.0 and up   |
 | v4.0.0 - 4.0.11 | v3.9.0 - 3.9.2   |
 | v3.7.0 - 3.7.8  | v3.8.0 - 3.8.9   |
 | v3.6.0 - 3.6.9  | v3.7.0 - 3.7.7   |
@@ -70,7 +70,7 @@ For a more examples, see the [provider documentation](https://registry.terraform
 
 ## Developing the Provider
 
-If you wish to work on the provider, you need [Go](http://www.golang.org) installed on your machine.
+If you wish to work on the provider, you need [Go](http://www.golang.org) installed on your machine (see [Requirements](#requirements) above).
 
 To compile the provider, run `go install`. This will build the provider and put the provider binary in the `$GOPATH/bin` directory.
 
