@@ -124,6 +124,11 @@ func resourcePowerOutletTemplateRead(ctx context.Context, d *schema.ResourceData
 
 	tmpl := res.GetPayload()
 
+	if tmpl == nil {
+		d.SetId("")
+		return nil
+	}
+
 	d.Set("name", tmpl.Name)
 	d.Set("description", tmpl.Description)
 	d.Set("label", tmpl.Label)
@@ -140,7 +145,11 @@ func resourcePowerOutletTemplateRead(ctx context.Context, d *schema.ResourceData
 		d.Set("feed_leg", nil)
 	}
 
-	d.Set("power_port_id", tmpl.PowerPort.ID)
+	if tmpl.PowerPort != nil {
+		d.Set("power_port_id", tmpl.PowerPort.ID)
+	} else {
+		d.Set("power_port_id", nil)
+	}
 
 	if tmpl.DeviceType != nil {
 		d.Set("device_type_id", tmpl.DeviceType.ID)

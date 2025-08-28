@@ -18,6 +18,10 @@ func dataSourceNetboxManufacturer() *schema.Resource {
 				Optional: true,
 				Computed: true,
 			},
+			"slug": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 			tagsKey: tagsSchemaRead,
 		},
 	}

@@ -76,16 +76,20 @@ func resourceNetboxPowerPortTemplateCreate(ctx context.Context, d *schema.Resour
 	description := d.Get("description").(string)
 	label := d.Get("label").(string)
 	powerPortType := d.Get("type").(string)
-	allocatedDraw := int64(d.Get("allocated_draw").(int))
-	maximumDraw := int64(d.Get("maximum_draw").(int))
 
 	data := models.WritablePowerPortTemplate{
-		Name:          &name,
-		Description:   description,
-		Label:         label,
-		Type:          powerPortType,
-		AllocatedDraw: &allocatedDraw,
-		MaximumDraw:   &maximumDraw,
+		Name:        &name,
+		Description: description,
+		Label:       label,
+		Type:        powerPortType,
+	}
+
+	// Only set draw values if they are greater than 0
+	if allocatedDraw := d.Get("allocated_draw").(int); allocatedDraw > 0 {
+		data.AllocatedDraw = int64ToPtr(int64(allocatedDraw))
+	}
+	if maximumDraw := d.Get("maximum_draw").(int); maximumDraw > 0 {
+		data.MaximumDraw = int64ToPtr(int64(maximumDraw))
 	}
 
 	if deviceTypeID, ok := d.Get("device_type_id").(int); ok && deviceTypeID != 0 {
@@ -157,16 +161,20 @@ func resourceNetboxPowerPortTemplateUpdate(ctx context.Context, d *schema.Resour
 	description := d.Get("description").(string)
 	label := d.Get("label").(string)
 	powerPortType := d.Get("type").(string)
-	allocatedDraw := int64(d.Get("allocated_draw").(int))
-	maximumDraw := int64(d.Get("maximum_draw").(int))
 
 	data := models.WritablePowerPortTemplate{
-		Name:          &name,
-		Description:   description,
-		Label:         label,
-		Type:          powerPortType,
-		AllocatedDraw: &allocatedDraw,
-		MaximumDraw:   &maximumDraw,
+		Name:        &name,
+		Description: description,
+		Label:       label,
+		Type:        powerPortType,
+	}
+
+	// Only set draw values if they are greater than 0
+	if allocatedDraw := d.Get("allocated_draw").(int); allocatedDraw > 0 {
+		data.AllocatedDraw = int64ToPtr(int64(allocatedDraw))
+	}
+	if maximumDraw := d.Get("maximum_draw").(int); maximumDraw > 0 {
+		data.MaximumDraw = int64ToPtr(int64(maximumDraw))
 	}
 
 	if d.HasChange("device_type_id") {
