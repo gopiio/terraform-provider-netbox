@@ -80,10 +80,8 @@ func resourceNetboxDeviceTypeCreate(d *schema.ResourceData, m interface{}) error
 	if partNo, ok := d.GetOk("part_number"); ok {
 		data.PartNumber = partNo.(string)
 	}
-
-	if uHeightValue, ok := d.GetOk("u_height"); ok {
-		data.UHeight = float64ToPtr(float64(uHeightValue.(float64)))
-	}
+	uHeightValue := d.Get("u_height")
+	data.UHeight = float64ToPtr(uHeightValue.(float64))
 
 	if isFullDepthValue, ok := d.GetOk("is_full_depth"); ok {
 		data.IsFullDepth = isFullDepthValue.(bool)
@@ -164,9 +162,8 @@ func resourceNetboxDeviceTypeUpdate(d *schema.ResourceData, m interface{}) error
 		data.PartNumber = partNo.(string)
 	}
 
-	if uHeightValue, ok := d.GetOk("u_height"); ok {
-		data.UHeight = float64ToPtr(float64(uHeightValue.(float64)))
-	}
+	uHeightValue := d.Get("u_height")
+	data.UHeight = float64ToPtr(uHeightValue.(float64))
 
 	if isFullDepthValue, ok := d.GetOk("is_full_depth"); ok {
 		data.IsFullDepth = isFullDepthValue.(bool)
