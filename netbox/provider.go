@@ -161,6 +161,9 @@ func Provider() *schema.Provider {
 			"netbox_vpn_tunnel":                 resourceNetboxVpnTunnel(),
 			"netbox_vpn_tunnel_termination":     resourceNetboxVpnTunnelTermination(),
 			"netbox_config_context":             resourceNetboxConfigContext(),
+			"netbox_power_port_template":        resourceNetboxPowerPortTemplate(),
+			"netbox_console_port_template":      resourceConsolePortTemplate(),
+			"netbox_power_outlet_template":      resourcePowerOutletTemplate(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			"netbox_asn":                dataSourceNetboxAsn(),
@@ -205,6 +208,7 @@ func Provider() *schema.Provider {
 			"netbox_racks":              dataSourceNetboxRacks(),
 			"netbox_rack_role":          dataSourceNetboxRackRole(),
 			"netbox_config_context":     dataSourceNetboxConfigContext(),
+			"netbox_manufacturer":       dataSourceNetboxManufacturer(),
 		},
 		Schema: map[string]*schema.Schema{
 			"server_url": {
