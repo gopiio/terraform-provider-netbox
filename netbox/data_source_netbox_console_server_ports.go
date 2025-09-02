@@ -12,9 +12,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
-func dataSourceNetboxConsolePorts() *schema.Resource {
+func dataSourceNetboxConsoleServerPorts() *schema.Resource {
 	return &schema.Resource{
-		Read:        dataSourceNetboxConsolePortRead,
+		Read:        dataSourceNetboxConsoleServerPortRead,
 		Description: `:meta:subcategory:dcim:`,
 		Schema: map[string]*schema.Schema{
 			"filter": {
@@ -45,7 +45,7 @@ func dataSourceNetboxConsolePorts() *schema.Resource {
 				Optional:     true,
 				ValidateFunc: validation.StringIsValidRegExp,
 			},
-			"console_ports": {
+			"console_server_ports": {
 				Type:     schema.TypeList,
 				Computed: true,
 				Elem: &schema.Resource{
@@ -80,10 +80,11 @@ func dataSourceNetboxConsolePorts() *schema.Resource {
 	}
 }
 
-func dataSourceNetboxConsolePortRead(d *schema.ResourceData, m interface{}) error {
+func dataSourceNetboxConsoleServerPortRead(d *schema.ResourceData, m interface{}) error {
 	api := m.(*providerState)
 
-	params := dcim.NewDcimConsolePortsListParams()
+	//params := virtualization.NewVirtualizationInterfacesListParams()
+	params := dcim.NewDcimConsoleServerPortsListParams()
 	params.Limit = getOptionalInt(d, "limit")
 
 	if filter, ok := d.GetOk("filter"); ok {
@@ -105,7 +106,7 @@ func dataSourceNetboxConsolePortRead(d *schema.ResourceData, m interface{}) erro
 		}
 	}
 
-	res, err := api.Dcim.DcimConsolePortsList(params, nil)
+	res, err := api.Dcim.DcimConsoleServerPortsList(params, nil)
 	if err != nil {
 		return err
 	}
@@ -114,20 +115,20 @@ func dataSourceNetboxConsolePortRead(d *schema.ResourceData, m interface{}) erro
 		return errors.New("no result")
 	}
 
-	var filteredConsolePorts []*models.ConsolePort
+	var filteredConsoleServerPorts []*models.ConsoleServerPort
 	if nameRegex, ok := d.GetOk("name_regex"); ok {
 		r := regexp.MustCompile(nameRegex.(string))
-		for _, consolePort := range res.GetPayload().Results {
-			if r.MatchString(*consolePort.Name) {
-				filteredConsolePorts = append(filteredConsolePorts, consolePort)
+		for _, consoleServerPort := range res.GetPayload().Results {
+			if r.MatchString(*consoleServerPort.Name) {
+				filteredConsoleServerPorts = append(filteredConsoleServerPorts, consoleServerPort)
 			}
 		}
 	} else {
-		filteredConsolePorts = res.GetPayload().Results
+		filteredConsoleServerPorts = res.GetPayload().Results
 	}
 
 	var s []map[string]interface{}
-	for _, v := range filteredConsolePorts {
+	for _, v := range filteredConsoleServerPorts {
 		var mapping = make(map[string]interface{})
 		mapping["id"] = v.ID
 		mapping["device_id"] = v.Device.ID
@@ -145,8 +146,9 @@ func dataSourceNetboxConsolePortRead(d *schema.ResourceData, m interface{}) erro
 			mapping["tag_ids"] = tags
 		}
 		mapping["occupied"] = v.Occupied
+
 		s = append(s, mapping)
 	}
 	d.SetId(id.UniqueId())
-	return d.Set("console_ports", s)
+	return d.Set("console_server_ports", s)
 }
