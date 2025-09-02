@@ -95,6 +95,10 @@ func dataSourceNetboxDevicePowerOutlets() *schema.Resource {
 							Optional: true,
 							Computed: true,
 						},
+						"occupied": {
+							Type:     schema.TypeBool,
+							Computed: true,
+						},
 					},
 				},
 			},
@@ -193,6 +197,7 @@ func dataSourceNetboxDevicePowerOutletsRead(d *schema.ResourceData, m interface{
 		}
 
 		mapping["mark_connected"] = v.MarkConnected
+		mapping["occupied"] = v.Occupied
 
 		s = append(s, mapping)
 	}
