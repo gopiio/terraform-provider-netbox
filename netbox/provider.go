@@ -165,6 +165,8 @@ func Provider() *schema.Provider {
 			"netbox_console_port_template":        resourceConsolePortTemplate(),
 			"netbox_power_outlet_template":        resourcePowerOutletTemplate(),
 			"netbox_console_server_port_template": resourceConsoleServerPortTemplate(),
+			"netbox_front_port_template":          resourceNetboxFrontPortTemplate(),
+			"netbox_rear_port_template":           resourceNetboxRearPortTemplate(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			"netbox_asn":                  dataSourceNetboxAsn(),
