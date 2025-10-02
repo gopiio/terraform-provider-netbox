@@ -216,7 +216,9 @@ func Provider() *schema.Provider {
 			"netbox_console_server_ports": dataSourceNetboxConsoleServerPorts(),
 			"netbox_device_power_outlets": dataSourceNetboxDevicePowerOutlets(),
 			"netbox_device_front_ports":   dataSourceNetboxFrontPorts(),
+			"netbox_front_ports":          dataSourceNetboxFrontPorts(),
 			"netbox_device_rear_ports":    dataSourceNetboxRearPorts(),
+			"netbox_cables":               dataSourceNetboxCables(),
 		},
 		Schema: map[string]*schema.Schema{
 			"server_url": {
