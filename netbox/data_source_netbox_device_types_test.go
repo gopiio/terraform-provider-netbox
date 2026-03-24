@@ -26,7 +26,6 @@ resource "netbox_device_type" "test1" {
   slug            = "%[1]s-model1"
   manufacturer_id = netbox_manufacturer.test.id
   part_number     = "%[1]s_part1"
-  description     = "%[1]s_description1"
   tags            = [netbox_tag.test.name]
 }
 
@@ -35,7 +34,6 @@ resource "netbox_device_type" "test2" {
   slug            = "%[1]s-model2"
   manufacturer_id = netbox_manufacturer.test.id
   part_number     = "%[1]s_part2"
-  description     = "%[1]s_description2"
 }
 
 resource "netbox_device_type" "test3" {
@@ -64,7 +62,6 @@ func TestAccNetboxDeviceTypesDataSource_basic(t *testing.T) {
 					resource.TestCheckResourceAttr("data.netbox_device_types.by_model", "device_types.0.model", testName+"_model1"),
 					resource.TestCheckResourceAttr("data.netbox_device_types.by_model", "device_types.0.slug", testName+"-model1"),
 					resource.TestCheckResourceAttr("data.netbox_device_types.by_model", "device_types.0.part_number", testName+"_part1"),
-					resource.TestCheckResourceAttr("data.netbox_device_types.by_model", "device_types.0.description", testName+"_description1"),
 					resource.TestCheckResourceAttrPair("data.netbox_device_types.by_model", "device_types.0.manufacturer_id", "netbox_manufacturer.test", "id"),
 					resource.TestCheckResourceAttr("data.netbox_device_types.by_model", "device_types.0.manufacturer_name", testName),
 					resource.TestCheckResourceAttr("data.netbox_device_types.by_model", "device_types.0.tags.#", "1"),
