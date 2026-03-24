@@ -128,13 +128,21 @@ func dataSourceNetboxCables() *schema.Resource {
 								Type: schema.TypeInt,
 							},
 						},
-						"custom_fields": {
-							Type:     schema.TypeMap,
-							Computed: true,
-							Elem: &schema.Schema{
-								Type: schema.TypeString,
-							},
+					"created": {
+						Type:     schema.TypeString,
+						Computed: true,
+					},
+					"last_updated": {
+						Type:     schema.TypeString,
+						Computed: true,
+					},
+					"custom_fields": {
+						Type:     schema.TypeMap,
+						Computed: true,
+						Elem: &schema.Schema{
+							Type: schema.TypeString,
 						},
+					},
 					},
 				},
 			},
@@ -234,6 +242,13 @@ func dataSourceNetboxCablesRead(d *schema.ResourceData, m interface{}) error {
 
 		mapping["description"] = v.Description
 		mapping["comments"] = v.Comments
+
+		if v.Created != nil {
+			mapping["created"] = v.Created.String()
+		}
+		if v.LastUpdated != nil {
+			mapping["last_updated"] = v.LastUpdated.String()
+		}
 
 		// Handle A terminations
 		if v.ATerminations != nil {

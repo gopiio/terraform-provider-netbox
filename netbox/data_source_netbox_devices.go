@@ -148,7 +148,15 @@ func dataSourceNetboxDevices() *schema.Resource {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
-						"tags": tagsSchemaRead,
+						"created": {
+						Type:     schema.TypeString,
+						Computed: true,
+					},
+					"last_updated": {
+						Type:     schema.TypeString,
+						Computed: true,
+					},
+					"tags": tagsSchemaRead,
 					},
 				},
 			},
@@ -311,6 +319,12 @@ func dataSourceNetboxDevicesRead(d *schema.ResourceData, m interface{}) error {
 				primaryIPv4 := ip.String()
 				mapping["primary_ipv4"] = &primaryIPv4
 			}
+		}
+		if device.Created != nil {
+			mapping["created"] = device.Created.String()
+		}
+		if device.LastUpdated != nil {
+			mapping["last_updated"] = device.LastUpdated.String()
 		}
 		if device.PrimaryIp6 != nil {
 			ip, _, err := net.ParseCIDR(*device.PrimaryIp6.Address)
